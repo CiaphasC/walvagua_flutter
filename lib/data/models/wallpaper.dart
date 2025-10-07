@@ -37,6 +37,9 @@ class Wallpaper {
   final String lastUpdate;
   final int rewarded;
 
+  /// Nombre listo para mostrar, con un fallback legible cuando la API responde vacío.
+  String get displayName => imageName.isNotEmpty ? imageName : 'Sin nombre';
+
   factory Wallpaper.fromJson(Map<String, dynamic> json) {
     return Wallpaper(
       imageId: json['image_id']?.toString() ?? '',

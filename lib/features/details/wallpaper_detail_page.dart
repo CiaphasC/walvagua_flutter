@@ -118,7 +118,7 @@ class _WallpaperDetailPageState extends ConsumerState<WallpaperDetailPage> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName,
+                                  wallpaper.displayName,
                                   style: Theme.of(context).textTheme.headlineSmall,
                                 ),
                               ),
@@ -372,7 +372,7 @@ class _WallpaperDetailPageState extends ConsumerState<WallpaperDetailPage> {
               children: [
                 Text('Información', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 16),
-                _InfoRow(label: 'Nombre', value: wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName),
+                _InfoRow(label: 'Nombre', value: wallpaper.displayName),
                 _InfoRow(label: 'Categoría', value: wallpaper.categoryName.isEmpty ? 'General' : wallpaper.categoryName),
                 _InfoRow(label: 'Resolución', value: wallpaper.resolution.isEmpty ? 'N/D' : wallpaper.resolution),
                 _InfoRow(label: 'Tamaño', value: wallpaper.size.isEmpty ? 'N/D' : wallpaper.size),

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 
 import '../data/models/wallpaper.dart';
+import 'favorite_toggle_button.dart';
+
+const EdgeInsets _kTileContentPadding = EdgeInsets.all(12);
 
 /// Common data passed to the footer builder so custom layouts can reuse the
 /// favorite toggle provided by the tile.
@@ -109,13 +112,13 @@ class WallpaperTileMetadataFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: _kTileContentPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName,
+            wallpaper.displayName,
             style: Theme.of(context).textTheme.titleMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -159,18 +162,20 @@ class _OverlayFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         final titleSize = width * 0.095; // proporcional al ancho
         final subtitleSize = width * 0.045;
 
-        final titleStyle = Theme.of(context)
+        final titleStyle = theme
             .textTheme
             .titleLarge
             ?.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: titleSize.clamp(14, 28));
 
-        final subtitleStyle = Theme.of(context)
+        final subtitleStyle = theme
             .textTheme
             .labelLarge
             ?.copyWith(color: const Color(0xFFFFC107), letterSpacing: 0.5, fontSize: subtitleSize.clamp(10, 16));
@@ -198,7 +203,7 @@ class _OverlayFooter extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName,
+                        wallpaper.displayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
@@ -215,20 +220,20 @@ class _OverlayFooter extends StatelessWidget {
                 ),
               ),
             ),
-            // Botón de favorito flotante
+            // Boton de favorito flotante
             if (onFavorite != null)
               Positioned(
                 right: 8,
                 bottom: 8,
-                child: Material(
-                  color: Colors.black45,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  child: IconButton(
-                    onPressed: onFavorite,
-                    icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-                    color: isFavorite ? Theme.of(context).colorScheme.primary : Colors.white,
-                  ),
+                child: FavoriteToggleButton(
+                  isFavorite: isFavorite,
+                  onPressed: onFavorite,
+                  activeColor: theme.colorScheme.primary,
+                  inactiveColor: Colors.white,
+                  backgroundColor: Colors.black45,
+                  padding: const EdgeInsets.all(6),
+                  iconSize: 24,
+                  tooltip: 'Favorito',
                 ),
               ),
           ],
@@ -238,7 +243,7 @@ class _OverlayFooter extends StatelessWidget {
   }
 }
 
-// Badge hexagonal eliminado según requerimiento
+// Badge hexagonal eliminado segun requerimiento
 
 class WallpaperTileFavoriteFooter extends StatelessWidget {
   const WallpaperTileFavoriteFooter({
@@ -251,19 +256,19 @@ class WallpaperTileFavoriteFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: _kTileContentPadding,
       child: Row(
         children: [
           Expanded(
             child: Text(
-              data.wallpaper.imageName.isEmpty ? 'Sin nombre' : data.wallpaper.imageName,
+              data.wallpaper.displayName,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           if (data.onFavorite != null)
-            IconButton(
-              icon: Icon(data.isFavorite ? Icons.favorite : Icons.favorite_border),
+            FavoriteToggleButton(
+              isFavorite: data.isFavorite,
               onPressed: data.onFavorite,
             ),
         ],
@@ -283,9 +288,9 @@ class WallpaperTileTitleFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: _kTileContentPadding,
       child: Text(
-        wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName,
+        wallpaper.displayName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
@@ -323,3 +328,4 @@ class WallpaperImage extends StatelessWidget {
     );
   }
 }
+
