@@ -1,6 +1,6 @@
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/theme_provider.dart';
@@ -31,9 +31,28 @@ class _ShellPageState extends ConsumerState<ShellPage> {
   Widget build(BuildContext context) {
     final themeController = ref.read(themeProvider.notifier);
     final theme = Theme.of(context);
-    final iconColor = theme.iconTheme.color ?? theme.colorScheme.onSurface;
     final primary = theme.colorScheme.primary;
-    final glowColor = primary.withValues(alpha: 0.35);
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final isCompact = width < 600;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final navGlassColor = theme.colorScheme.surface.withValues(
+      alpha: isDark
+          ? (isCompact ? 0.36 : 0.4)
+          : (isCompact ? 0.58 : 0.54),
+    );
+    final navHighlight = Colors.white.withValues(
+      alpha: isDark ? (isCompact ? 0.02 : 0.04) : (isCompact ? 0.08 : 0.1),
+    );
+    final navBorderColor = theme.colorScheme.onSurface.withValues(
+      alpha: isDark ? (isCompact ? 0.08 : 0.1) : (isCompact ? 0.05 : 0.07),
+    );
+    final navShadowColor = Colors.black.withValues(alpha: isDark ? 0.16 : 0.1);
+    final navBlur = isCompact ? 8.0 : 12.0;
+    final navHeight = isCompact ? 64.0 : 72.0;
+    final navHorizontalPadding = isCompact ? 0.0 : 24.0;
+    final navBottomPadding = mediaQuery.padding.bottom + (isCompact ? 8.0 : 16.0);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +64,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
             color: theme.inputDecorationTheme.fillColor,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4)),
             ],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -106,52 +125,78 @@ class _ShellPageState extends ConsumerState<ShellPage> {
         children: _pages,
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 14, offset: const Offset(0, 4)),
-            ],
-          ),
-          child: NavigationBar(
-            height: 64,
-            backgroundColor: Colors.transparent,
-            indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.14),
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (index) {
-              if (index == 3) {
-                themeController.toggleTheme();
-                return;
-              }
-              setState(() => _currentIndex = index);
-            },
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.photo_library_outlined),
-                selectedIcon: Icon(Icons.photo_library_rounded, color: primary),
-                label: 'Wallpapers',
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.category_outlined),
-                selectedIcon: Icon(Icons.category_rounded, color: primary),
-                label: 'Categorías',
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.favorite_border_rounded),
-                selectedIcon: Icon(Icons.favorite_rounded, color: primary),
-                label: 'Favoritos',
-              ),
-              NavigationDestination(
-                icon: Icon(theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode),
-                selectedIcon: Icon(
-                  theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode,
-                  color: primary,
+        padding: EdgeInsets.fromLTRB(
+          navHorizontalPadding,
+          0,
+          navHorizontalPadding,
+          navBottomPadding,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(isCompact ? 0 : 20)),
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: navBlur, sigmaY: navBlur),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      navHighlight,
+                      navGlassColor,
+                    ],
+                  ),
+                  border: Border(
+                    top: BorderSide(color: navBorderColor),
+                  ),
+                  boxShadow: [
+                    BoxShadow(color: navShadowColor, blurRadius: 8, offset: const Offset(0, -1)),
+                  ],
                 ),
-                label: 'Tema',
+                child: NavigationBar(
+                  height: navHeight,
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  indicatorColor: primary.withValues(alpha: isCompact ? 0.14 : 0.17),
+                  selectedIndex: _currentIndex,
+                  labelBehavior: isCompact
+                      ? NavigationDestinationLabelBehavior.alwaysShow
+                      : NavigationDestinationLabelBehavior.alwaysShow,
+                  onDestinationSelected: (index) {
+                    if (index == 3) {
+                      themeController.toggleTheme();
+                      return;
+                    }
+                    setState(() => _currentIndex = index);
+                  },
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(Icons.photo_library_outlined),
+                      selectedIcon: Icon(Icons.photo_library_rounded, color: primary),
+                      label: 'Wallpapers',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.category_outlined),
+                      selectedIcon: Icon(Icons.category_rounded, color: primary),
+                      label: 'Categorías',
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.favorite_border_rounded),
+                      selectedIcon: Icon(Icons.favorite_rounded, color: primary),
+                      label: 'Favoritos',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+                      selectedIcon: Icon(
+                        isDark ? Icons.light_mode : Icons.dark_mode,
+                        color: primary,
+                      ),
+                      label: 'Tema',
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -173,3 +218,4 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     }
   }
 }
+
