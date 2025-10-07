@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../providers/theme_provider.dart';
 import '../categories/categories_page.dart';
 import '../favorites/favorites_page.dart';
@@ -55,105 +56,177 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     final navBottomPadding = mediaQuery.padding.bottom + (isCompact ? 8.0 : 16.0);
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 72,
-        automaticallyImplyLeading: false,
-        title: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            color: theme.inputDecorationTheme.fillColor,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4)),
-            ],
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            children: [
-              IconButton(
-                tooltip: 'Buscar',
-                icon: Icon(
-                  Icons.search_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SearchPage()),
-                  );
-                },
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    _titleForIndex(_currentIndex),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Material(
-                  color: Colors.transparent,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      if (_currentIndex != 3) {
-                        setState(() => _currentIndex = 3);
-                      }
-                    },
-                    child: Ink.image(
-                      image: const AssetImage('assets/images/app_icon_circle.webp'),
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark ? AppColors.darkBackgroundGradient : AppColors.backgroundGradient,
         ),
-      ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(
-          navHorizontalPadding,
-          0,
-          navHorizontalPadding,
-          navBottomPadding,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(isCompact ? 0 : 20)),
-          child: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: navBlur, sigmaY: navBlur),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      navHighlight,
-                      navGlassColor,
+        child: Column(
+          children: [
+            // AppBar moderno con glassmorphism
+            Container(
+              height: 72,
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.surface.withOpacity(0.8),
+                    theme.colorScheme.surface.withOpacity(0.6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: Border.all(
+                  color: theme.colorScheme.outline.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Row(
+                    children: [
+                      // Botón de búsqueda
+                      Container(
+                        margin: const EdgeInsets.only(left: 8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: IconButton(
+                          tooltip: 'Buscar',
+                          icon: Icon(
+                            Icons.search_rounded,
+                            color: theme.colorScheme.primary,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const SearchPage()),
+                            );
+                          },
+                        ),
+                      ),
+                      // Título centrado
+                      Expanded(
+                        child: Center(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0.0, 0.3),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              _titleForIndex(_currentIndex),
+                              key: ValueKey(_currentIndex),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Botón de configuración
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                          child: IconButton(
+                            tooltip: 'Configuración',
+                            icon: Icon(
+                              Icons.settings_rounded,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            onPressed: () {
+                              if (_currentIndex != 3) {
+                                setState(() => _currentIndex = 3);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  border: Border(
-                    top: BorderSide(color: navBorderColor),
-                  ),
-                  boxShadow: [
-                    BoxShadow(color: navShadowColor, blurRadius: 8, offset: const Offset(0, -1)),
-                  ],
                 ),
-                child: NavigationBar(
+              ),
+            ),
+            // Contenido principal con animación
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.1, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: _pages[_currentIndex],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.fromLTRB(
+          navHorizontalPadding + 16,
+          0,
+          navHorizontalPadding + 16,
+          navBottomPadding + 16,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.surface.withOpacity(0.8),
+              theme.colorScheme.surface.withOpacity(0.6),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: NavigationBar(
                   height: navHeight,
                   backgroundColor: Colors.transparent,
                   surfaceTintColor: Colors.transparent,
@@ -171,25 +244,125 @@ class _ShellPageState extends ConsumerState<ShellPage> {
                   },
                   destinations: [
                     NavigationDestination(
-                      icon: const Icon(Icons.photo_library_outlined),
-                      selectedIcon: Icon(Icons.photo_library_rounded, color: primary),
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _currentIndex == 0 ? primary.withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.photo_library_outlined,
+                          color: _currentIndex == 0 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      selectedIcon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.photo_library_rounded, color: Colors.white),
+                      ),
                       label: 'Wallpapers',
                     ),
                     NavigationDestination(
-                      icon: const Icon(Icons.category_outlined),
-                      selectedIcon: Icon(Icons.category_rounded, color: primary),
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _currentIndex == 1 ? primary.withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.category_outlined,
+                          color: _currentIndex == 1 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      selectedIcon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.category_rounded, color: Colors.white),
+                      ),
                       label: 'Categorías',
                     ),
                     NavigationDestination(
-                      icon: const Icon(Icons.favorite_border_rounded),
-                      selectedIcon: Icon(Icons.favorite_rounded, color: primary),
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _currentIndex == 2 ? primary.withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.favorite_border_rounded,
+                          color: _currentIndex == 2 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      selectedIcon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.accentGradient,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.lightAccent.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.favorite_rounded, color: Colors.white),
+                      ),
                       label: 'Favoritos',
                     ),
                     NavigationDestination(
-                      icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-                      selectedIcon: Icon(
-                        isDark ? Icons.light_mode : Icons.dark_mode,
-                        color: primary,
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _currentIndex == 3 ? primary.withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          isDark ? Icons.light_mode : Icons.dark_mode,
+                          color: _currentIndex == 3 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      selectedIcon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.lightSecondary, AppColors.lightSecondary.withOpacity(0.8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.lightSecondary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isDark ? Icons.light_mode : Icons.dark_mode,
+                          color: Colors.white,
+                        ),
                       ),
                       label: 'Tema',
                     ),

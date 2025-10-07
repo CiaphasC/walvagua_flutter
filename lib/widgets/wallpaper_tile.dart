@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 
+import '../core/theme/app_theme.dart';
 import '../data/models/wallpaper.dart';
 import 'favorite_toggle_button.dart';
 
@@ -67,6 +70,20 @@ class WallpaperTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+          ],
         ),
         child: ClipRRect(
           borderRadius: borderRadius,
@@ -182,19 +199,31 @@ class _OverlayFooter extends StatelessWidget {
 
         return Stack(
           children: [
-            // Degradado suave para legibilidad en toda la tarjeta
+            // Degradado moderno con blur effect
             Positioned.fill(
-              child: DecoratedBox(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black45],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.7),
+                        ],
+                        stops: const [0.0, 0.6, 1.0],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
                 ),
               ),
             ),
-            // Contenido centrado
+            // Contenido centrado con mejor tipografía
             Positioned.fill(
               child: Center(
                 child: Padding(
@@ -202,38 +231,78 @@ class _OverlayFooter extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        wallpaper.displayName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: titleStyle,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          wallpaper.displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: titleStyle?.copyWith(
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.5),
+                                offset: const Offset(0, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'STREAK COLLECTION',
-                        textAlign: TextAlign.center,
-                        style: subtitleStyle,
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.accentGradient,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'PREMIUM COLLECTION',
+                          textAlign: TextAlign.center,
+                          style: subtitleStyle?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            // Boton de favorito flotante
+            // Boton de favorito flotante mejorado
             if (onFavorite != null)
               Positioned(
-                right: 8,
-                bottom: 8,
-                child: FavoriteToggleButton(
-                  isFavorite: isFavorite,
-                  onPressed: onFavorite,
-                  activeColor: theme.colorScheme.primary,
-                  inactiveColor: Colors.white,
-                  backgroundColor: Colors.black45,
-                  padding: const EdgeInsets.all(6),
-                  iconSize: 24,
-                  tooltip: 'Favorito',
+                right: 12,
+                bottom: 12,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: FavoriteToggleButton(
+                    isFavorite: isFavorite,
+                    onPressed: onFavorite,
+                    activeColor: AppColors.lightAccent,
+                    inactiveColor: Colors.white,
+                    backgroundColor: Colors.transparent,
+                    padding: const EdgeInsets.all(8),
+                    iconSize: 20,
+                    tooltip: 'Favorito',
+                  ),
                 ),
               ),
           ],

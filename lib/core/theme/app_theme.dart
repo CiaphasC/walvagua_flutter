@@ -3,64 +3,110 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const lightPrimary = Color(0xFFC9003E);
-  static const lightAccent = Color(0xFFE53965);
-  static const lightSecondary = Color(0xFFFF9800);
-  static const lightBackground = Color(0xFFFFFFFF);
-  static const lightBottomNavigation = Color(0xFFEFF4F8);
-  static const lightSearchBar = Color(0xFFFFE4EC);
-  static const lightTextDefault = Color(0xFFC9003E);
+  // Paleta moderna con gradientes y colores más vibrantes
+  static const lightPrimary = Color(0xFF6C5CE7); // Púrpura moderno
+  static const lightPrimaryVariant = Color(0xFF5A4FCF);
+  static const lightAccent = Color(0xFFFF6B9D); // Rosa vibrante
+  static const lightSecondary = Color(0xFFFFD93D); // Amarillo dorado
+  static const lightTertiary = Color(0xFF74B9FF); // Azul cielo
+  
+  static const lightBackground = Color(0xFFFAFBFC);
+  static const lightSurface = Color(0xFFFFFFFF);
+  static const lightSurfaceVariant = Color(0xFFF8F9FA);
+  static const lightBottomNavigation = Color(0xFFFFFFFF);
+  static const lightSearchBar = Color(0xFFF1F3F4);
+  static const lightTextDefault = Color(0xFF2D3436);
+  static const lightTextSecondary = Color(0xFF636E72);
   static const lightFabBackground = Color(0xFFFFFFFF);
-  static const lightFabIcon = Color(0xFFC9003E);
+  static const lightFabIcon = Color(0xFF6C5CE7);
 
-  static const darkPrimary = Color(0xFFAB0035);
-  static const darkBackground = Color(0xFF1C1E22);
-  static const darkBottomNavigation = Color(0xFF222D36);
-  static const darkSearchBar = Color(0xFF222D36);
-  static const darkTextDefault = Color(0xFF97002F);
-  static const darkFabBackground = Color(0xFF384756);
-  static const darkFabIcon = Color(0xFF480016);
+  // Colores oscuros más sofisticados
+  static const darkPrimary = Color(0xFF7B68EE);
+  static const darkPrimaryVariant = Color(0xFF6A5ACD);
+  static const darkAccent = Color(0xFFFF6B9D);
+  static const darkSecondary = Color(0xFFFFD93D);
+  static const darkTertiary = Color(0xFF74B9FF);
+  
+  static const darkBackground = Color(0xFF0F0F23);
+  static const darkSurface = Color(0xFF1A1A2E);
+  static const darkSurfaceVariant = Color(0xFF16213E);
+  static const darkBottomNavigation = Color(0xFF1A1A2E);
+  static const darkSearchBar = Color(0xFF16213E);
+  static const darkTextDefault = Color(0xFFE94560);
+  static const darkTextSecondary = Color(0xFFB2BEC3);
+  static const darkFabBackground = Color(0xFF1A1A2E);
+  static const darkFabIcon = Color(0xFFE94560);
 
-  static const shimmerBase = Color(0xFFBCBEC1);
-  static const greySoft = Color(0xFFE0E0E0);
-  static const separator = Color(0xFFefefef);
+  // Colores de estado y utilidades
+  static const shimmerBase = Color(0xFFE2E8F0);
+  static const shimmerHighlight = Color(0xFFF7FAFC);
+  static const greySoft = Color(0xFFE2E8F0);
+  static const separator = Color(0xFFE2E8F0);
+  static const success = Color(0xFF00B894);
+  static const warning = Color(0xFFFFD93D);
+  static const error = Color(0xFFE17055);
+  static const info = Color(0xFF74B9FF);
+
+  // Gradientes modernos
+  static const primaryGradient = LinearGradient(
+    colors: [Color(0xFF6C5CE7), Color(0xFF5A4FCF)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  static const accentGradient = LinearGradient(
+    colors: [Color(0xFFFF6B9D), Color(0xFFFF8A95)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  static const backgroundGradient = LinearGradient(
+    colors: [Color(0xFFFAFBFC), Color(0xFFF1F3F4)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+  
+  static const darkBackgroundGradient = LinearGradient(
+    colors: [Color(0xFF0F0F23), Color(0xFF1A1A2E)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 }
 
 class AppTheme {
   AppTheme._();
 
   static ThemeData light() {
-    final colorScheme = ColorScheme(
+    const colorScheme = ColorScheme(
       brightness: Brightness.light,
       primary: AppColors.lightPrimary,
       surfaceTint: AppColors.lightPrimary,
       onPrimary: Colors.white,
-      primaryContainer: AppColors.lightAccent,
+      primaryContainer: AppColors.lightPrimaryVariant,
       onPrimaryContainer: Colors.white,
       secondary: AppColors.lightSecondary,
-      onSecondary: Colors.white,
+      onSecondary: AppColors.lightTextDefault,
       secondaryContainer: AppColors.lightSecondary,
-      onSecondaryContainer: Colors.white,
-      tertiary: AppColors.lightAccent,
+      onSecondaryContainer: AppColors.lightTextDefault,
+      tertiary: AppColors.lightTertiary,
       onTertiary: Colors.white,
-      tertiaryContainer: AppColors.lightAccent,
+      tertiaryContainer: AppColors.lightTertiary,
       onTertiaryContainer: Colors.white,
-      error: Colors.red.shade700,
+      error: AppColors.error,
       onError: Colors.white,
-      errorContainer: Colors.red.shade100,
-      onErrorContainer: Colors.red.shade900,
-      surface: AppColors.lightBackground,
-      onSurface: Colors.black87,
-      // ignore: deprecated_member_use
-      surfaceVariant: const Color(0xFFF2F2F2),
-      onSurfaceVariant: Colors.grey.shade700,
-      outline: Colors.grey.shade400,
-      outlineVariant: Colors.grey.shade300,
-      shadow: Colors.black26,
-      scrim: Colors.black45,
-      inverseSurface: const Color(0xFF121212),
+      errorContainer: AppColors.error.withOpacity(0.1),
+      onErrorContainer: AppColors.error,
+      surface: AppColors.lightSurface,
+      onSurface: AppColors.lightTextDefault,
+      surfaceVariant: AppColors.lightSurfaceVariant,
+      onSurfaceVariant: AppColors.lightTextSecondary,
+      outline: AppColors.greySoft,
+      outlineVariant: AppColors.separator,
+      shadow: Colors.black.withOpacity(0.08),
+      scrim: Colors.black.withOpacity(0.4),
+      inverseSurface: AppColors.darkSurface,
       onInverseSurface: Colors.white,
-      inversePrimary: AppColors.lightTextDefault,
+      inversePrimary: AppColors.lightPrimary,
     );
 
     return ThemeData(
@@ -126,37 +172,36 @@ class AppTheme {
   }
 
   static ThemeData dark() {
-    final colorScheme = ColorScheme(
+    const colorScheme = ColorScheme(
       brightness: Brightness.dark,
       primary: AppColors.darkPrimary,
       surfaceTint: AppColors.darkPrimary,
       onPrimary: Colors.white,
-      primaryContainer: const Color(0xFF7A0024),
+      primaryContainer: AppColors.darkPrimaryVariant,
       onPrimaryContainer: Colors.white,
-      secondary: AppColors.darkPrimary,
-      onSecondary: Colors.white,
-      secondaryContainer: const Color(0xFF63001C),
-      onSecondaryContainer: Colors.white,
-      tertiary: AppColors.darkPrimary,
+      secondary: AppColors.darkSecondary,
+      onSecondary: AppColors.darkTextDefault,
+      secondaryContainer: AppColors.darkSecondary,
+      onSecondaryContainer: AppColors.darkTextDefault,
+      tertiary: AppColors.darkTertiary,
       onTertiary: Colors.white,
-      tertiaryContainer: const Color(0xFF63001C),
+      tertiaryContainer: AppColors.darkTertiary,
       onTertiaryContainer: Colors.white,
-      error: Colors.red.shade400,
+      error: AppColors.error,
       onError: Colors.white,
-      errorContainer: Colors.red.shade900,
-      onErrorContainer: Colors.red.shade100,
-      surface: AppColors.darkBackground,
+      errorContainer: AppColors.error.withOpacity(0.2),
+      onErrorContainer: Colors.white,
+      surface: AppColors.darkSurface,
       onSurface: Colors.white,
-      // ignore: deprecated_member_use
-      surfaceVariant: const Color(0xFF2A2C31),
-      onSurfaceVariant: Colors.white70,
-      outline: Colors.white24,
-      outlineVariant: Colors.white12,
-      shadow: Colors.black,
-      scrim: Colors.black87,
+      surfaceVariant: AppColors.darkSurfaceVariant,
+      onSurfaceVariant: AppColors.darkTextSecondary,
+      outline: AppColors.darkTextSecondary.withOpacity(0.3),
+      outlineVariant: AppColors.darkTextSecondary.withOpacity(0.1),
+      shadow: Colors.black.withOpacity(0.3),
+      scrim: Colors.black.withOpacity(0.6),
       inverseSurface: AppColors.lightBackground,
-      onInverseSurface: Colors.black87,
-      inversePrimary: AppColors.lightPrimary,
+      onInverseSurface: AppColors.lightTextDefault,
+      inversePrimary: AppColors.darkPrimary,
     );
 
     return ThemeData(

@@ -8,6 +8,7 @@ import '../../data/models/wallpaper.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/layout_provider.dart';
 import '../../providers/wallpaper_feed_provider.dart';
+import '../../widgets/modern_shimmer.dart';
 import '../details/wallpaper_carousel_page.dart';
 import '../../widgets/wallpaper_tile.dart';
 
@@ -97,7 +98,10 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
     final gridConfig = _resolveGridConfig(context, layout);
 
     if (feedState.isLoading && feedState.items.isEmpty) {
-      return _LoadingGrid(config: gridConfig);
+      return ShimmerWallpaperGrid(
+        columns: gridConfig.columns,
+        aspectRatio: gridConfig.aspectRatio,
+      );
     }
 
     if (feedState.error != null && feedState.items.isEmpty) {

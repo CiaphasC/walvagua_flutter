@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../providers/app_config_provider.dart';
 import '../../providers/wallpaper_feed_provider.dart';
 import '../wallpapers/wallpaper_tab.dart';
@@ -21,56 +24,115 @@ class HomePage extends ConsumerWidget {
 
     return DefaultTabController(
       length: menus.length,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: GlowContainer(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
-              glowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.22),
-              blurRadius: 28,
-              spreadRadius: 1.4,
-              borderRadius: BorderRadius.circular(24),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: TabBar(
-                isScrollable: true,
-                indicator: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.darkBackgroundGradient
+              : AppColors.backgroundGradient,
+        ),
+        child: Column(
+          children: [
+            // Header moderno con glassmorphism
+            Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                    Theme.of(context).colorScheme.surface.withOpacity(0.6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                tabs: [
-                  for (final menu in menus)
-                    Tab(
-                      child: GlowText(
-                        menu.title,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        glowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                        blurRadius: 18,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 0,
+                  ),
                 ],
               ),
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                for (final menu in menus)
-                  WallpaperTab(
-                    title: menu.title,
-                    request: WallpaperFeedRequest(
-                      order: menu.order,
-                      filter: menu.filter,
-                      category: menu.category,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(28),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: TabBar(
+                      isScrollable: true,
+                      indicator: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.lightPrimary.withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      dividerColor: Colors.transparent,
+                      tabs: [
+                        for (final menu in menus)
+                          Tab(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: Text(
+                                menu.title,
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-              ],
+                ),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.7),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: TabBarView(
+                    children: [
+                      for (final menu in menus)
+                        WallpaperTab(
+                          title: menu.title,
+                          request: WallpaperFeedRequest(
+                            order: menu.order,
+                            filter: menu.filter,
+                            category: menu.category,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
