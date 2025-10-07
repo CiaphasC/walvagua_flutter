@@ -8,7 +8,7 @@ import '../../data/models/wallpaper.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/layout_provider.dart';
 import '../../providers/wallpaper_feed_provider.dart';
-import '../details/wallpaper_detail_page.dart';
+import '../details/wallpaper_carousel_page.dart';
 import '../../widgets/wallpaper_tile.dart';
 
 const double _kGridSpacing = 8.0;
@@ -142,9 +142,9 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => WallpaperDetailPage(
-                            wallpaperId: summary.wallpaper.imageId,
-                            initialWallpaper: summary.wallpaper,
+                          builder: (_) => WallpaperCarouselPage(
+                            wallpapers: feedState.items,
+                            initialIndex: index,
                           ),
                         ),
                       );

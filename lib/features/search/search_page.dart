@@ -7,7 +7,7 @@ import '../../data/models/wallpaper.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/search_history_provider.dart';
 import '../../providers/search_provider.dart';
-import '../details/wallpaper_detail_page.dart';
+import '../details/wallpaper_carousel_page.dart';
 import '../wallpapers/category_wallpaper_page.dart';
 import '../../widgets/wallpaper_tile.dart';
 
@@ -256,9 +256,9 @@ class _WallpaperResults extends ConsumerWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => WallpaperDetailPage(
-                  wallpaperId: wallpaper.imageId,
-                  initialWallpaper: wallpaper,
+                builder: (_) => WallpaperCarouselPage(
+                  wallpapers: wallpapers,
+                  initialIndex: index,
                 ),
               ),
             );

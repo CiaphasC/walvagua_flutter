@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/favorites_provider.dart';
-import '../details/wallpaper_detail_page.dart';
+import '../details/wallpaper_carousel_page.dart';
 import '../../widgets/wallpaper_tile.dart';
 
 class FavoritesPage extends ConsumerWidget {
@@ -55,9 +55,9 @@ class FavoritesPage extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => WallpaperDetailPage(
-                      wallpaperId: wallpaper.imageId,
-                      initialWallpaper: wallpaper,
+                    builder: (_) => WallpaperCarouselPage(
+                      wallpapers: favorites,
+                      initialIndex: index,
                     ),
                   ),
                 );
