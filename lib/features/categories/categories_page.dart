@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
@@ -62,34 +63,46 @@ class _CategoryListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () => _openCategory(context, category),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      tileColor: Theme.of(context)
-          .colorScheme
-          .surfaceContainerHighest
-          .withValues(alpha: 0.2),
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          width: 56,
-          height: 56,
-          child: CachedNetworkImage(
-            imageUrl: category.image,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withValues(alpha: 0.2),
+    final theme = Theme.of(context);
+    final glowColor = theme.colorScheme.primary.withValues(alpha: 0.22);
+    return GlowContainer(
+      color: theme.cardColor.withValues(alpha: 0.94),
+      glowColor: glowColor,
+      blurRadius: 20,
+      spreadRadius: 0.8,
+      borderRadius: BorderRadius.circular(16),
+      child: ListTile(
+        onTap: () => _openCategory(context, category),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            width: 56,
+            height: 56,
+            child: CachedNetworkImage(
+              imageUrl: category.image,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.category_rounded),
             ),
-            errorWidget: (context, url, error) => const Icon(Icons.category_rounded),
           ),
         ),
+        title: GlowText(
+          category.name,
+          style: theme.textTheme.titleMedium,
+          glowColor: glowColor,
+          blurRadius: 16,
+        ),
+        subtitle: Text('${category.totalWallpapers} wallpapers'),
+        trailing: GlowIcon(
+          Icons.chevron_right_rounded,
+          color: theme.iconTheme.color,
+          glowColor: glowColor,
+          blurRadius: 12,
+        ),
       ),
-      title: Text(category.name),
-      subtitle: Text('${category.totalWallpapers} wallpapers'),
-      trailing: const Icon(Icons.chevron_right_rounded),
     );
   }
 }
@@ -101,52 +114,57 @@ class _CategoryGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => _openCategory(context, category),
+    final theme = Theme.of(context);
+    final glowColor = theme.colorScheme.primary.withValues(alpha: 0.26);
+    return GlowContainer(
+      color: theme.cardColor.withValues(alpha: 0.9),
+      glowColor: glowColor,
+      blurRadius: 28,
+      spreadRadius: 1.2,
       borderRadius: BorderRadius.circular(16),
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withValues(alpha: 0.2),
-        ),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: CachedNetworkImage(
-                  imageUrl: category.image,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceContainerHighest
-                        .withValues(alpha: 0.2),
+      child: InkWell(
+        onTap: () => _openCategory(context, category),
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+            color: Colors.transparent,
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: CachedNetworkImage(
+                    imageUrl: category.image,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.category_rounded, size: 48),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.category_rounded, size: 48),
                 ),
               ),
-            ),
-            Positioned(
-              left: 12,
-              right: 12,
-              bottom: 12,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.black54,
+              Positioned(
+                left: 12,
+                right: 12,
+                bottom: 12,
+                child: GlowContainer(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  glowColor: glowColor,
+                  blurRadius: 18,
+                  spreadRadius: 0.6,
                   borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      GlowText(
                         category.name,
+                        glowColor: glowColor,
+                        blurRadius: 20,
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                       Text(
@@ -157,8 +175,8 @@ class _CategoryGridTile extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

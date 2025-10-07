@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/app_config_provider.dart';
@@ -22,14 +23,37 @@ class HomePage extends ConsumerWidget {
       length: menus.length,
       child: Column(
         children: [
-          TabBar(
-            isScrollable: true,
-            tabs: [
-              for (final menu in menus)
-                Tab(
-                  text: menu.title,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: GlowContainer(
+              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
+              glowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.22),
+              blurRadius: 28,
+              spreadRadius: 1.4,
+              borderRadius: BorderRadius.circular(24),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: TabBar(
+                isScrollable: true,
+                indicator: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-            ],
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                tabs: [
+                  for (final menu in menus)
+                    Tab(
+                      child: GlowText(
+                        menu.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        glowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                        blurRadius: 18,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
           Expanded(
             child: TabBarView(

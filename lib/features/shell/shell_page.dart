@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/theme_provider.dart';
@@ -28,36 +30,58 @@ class _ShellPageState extends ConsumerState<ShellPage> {
   @override
   Widget build(BuildContext context) {
     final themeController = ref.read(themeProvider.notifier);
+    final theme = Theme.of(context);
+    final iconColor = theme.iconTheme.color ?? theme.colorScheme.onSurface;
+    final primary = theme.colorScheme.primary;
+    final glowColor = primary.withValues(alpha: 0.35);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titleForIndex(_currentIndex)),
+        title: GlowText(
+          _titleForIndex(_currentIndex),
+          style: theme.textTheme.titleLarge,
+          glowColor: glowColor,
+          blurRadius: 22,
+        ),
         actions: [
           if (_currentIndex != 3) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Material(
+              child: GlowContainer(
                 color: Colors.transparent,
-                shape: const CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () {
-                    if (_currentIndex != 3) {
-                      setState(() => _currentIndex = 3);
-                    }
-                  },
-                  child: Ink.image(
-                    image: const AssetImage('assets/images/app_icon_circle.webp'),
-                    width: 36,
-                    height: 36,
-                    fit: BoxFit.cover,
+                glowColor: glowColor,
+                blurRadius: 18,
+                spreadRadius: 0.8,
+                borderRadius: BorderRadius.circular(22),
+                child: Material(
+                  color: Colors.transparent,
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () {
+                      if (_currentIndex != 3) {
+                        setState(() => _currentIndex = 3);
+                      }
+                    },
+                    child: Ink.image(
+                      image: const AssetImage('assets/images/app_icon_circle.webp'),
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
             ),
             IconButton(
               tooltip: 'Buscar',
-              icon: const Icon(Icons.search_rounded),
+              icon: GlowIcon(
+                Icons.search_rounded,
+                color: iconColor,
+                glowColor: glowColor,
+                blurRadius: 20,
+              ),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SearchPage()),
@@ -67,7 +91,12 @@ class _ShellPageState extends ConsumerState<ShellPage> {
           ],
           IconButton(
             tooltip: 'Cambiar tema',
-            icon: Icon(Theme.of(context).brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode),
+            icon: GlowIcon(
+              theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode,
+              color: iconColor,
+              glowColor: glowColor,
+              blurRadius: 22,
+            ),
             onPressed: themeController.toggleTheme,
           ),
         ],
@@ -83,11 +112,49 @@ class _ShellPageState extends ConsumerState<ShellPage> {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.photo_library_rounded), label: 'Wallpapers'),
-          BottomNavigationBarItem(icon: Icon(Icons.category_rounded), label: 'Categorías'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_rounded), label: 'Favoritos'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_rounded), label: 'Ajustes'),
+        selectedItemColor: primary,
+        unselectedItemColor: iconColor.withValues(alpha: 0.7),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.photo_library_rounded),
+            activeIcon: GlowIcon(
+              Icons.photo_library_rounded,
+              color: primary,
+              glowColor: glowColor,
+              blurRadius: 22,
+            ),
+            label: 'Wallpapers',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.category_rounded),
+            activeIcon: GlowIcon(
+              Icons.category_rounded,
+              color: primary,
+              glowColor: glowColor,
+              blurRadius: 22,
+            ),
+            label: 'Categorías',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.favorite_rounded),
+            activeIcon: GlowIcon(
+              Icons.favorite_rounded,
+              color: primary,
+              glowColor: glowColor,
+              blurRadius: 22,
+            ),
+            label: 'Favoritos',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings_rounded),
+            activeIcon: GlowIcon(
+              Icons.settings_rounded,
+              color: primary,
+              glowColor: glowColor,
+              blurRadius: 22,
+            ),
+            label: 'Ajustes',
+          ),
         ],
       ),
     );

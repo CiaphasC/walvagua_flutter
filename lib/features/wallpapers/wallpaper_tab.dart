@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/wallpaper.dart';
@@ -89,6 +90,7 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final summary = tiles[index];
+                  final animationDelay = Duration(milliseconds: 80 * (index % 6));
                   return WallpaperTile(
                     wallpaper: summary.wallpaper,
                     isFavorite: summary.isFavorite,
@@ -103,7 +105,14 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
                       );
                     },
                     onFavorite: () => ref.read(favoritesProvider.notifier).toggle(summary.wallpaper),
-                  );
+                  ).animate(delay: animationDelay).fadeIn(
+                        duration: const Duration(milliseconds: 320),
+                        curve: Curves.easeOut,
+                      ).scaleXY(
+                        begin: 0.95,
+                        duration: const Duration(milliseconds: 320),
+                        curve: Curves.easeOut,
+                      );
                 },
                 childCount: tiles.length,
               ),

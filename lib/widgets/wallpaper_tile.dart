@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 
 import '../data/models/wallpaper.dart';
 
@@ -56,7 +57,7 @@ class WallpaperTile extends StatelessWidget {
           onFavorite: onFavorite,
         );
 
-    return InkWell(
+    Widget tile = InkWell(
       onTap: onTap,
       borderRadius: borderRadius,
       child: Ink(
@@ -83,6 +84,20 @@ class WallpaperTile extends StatelessWidget {
         ),
       ),
     );
+
+    if (isFavorite) {
+      final baseColor = Theme.of(context).colorScheme.primary;
+      final glowColor = baseColor.withValues(alpha: 0.45);
+      tile = GlowContainer(
+        glowColor: glowColor,
+        blurRadius: 18,
+        spreadRadius: 1.2,
+        borderRadius: borderRadius,
+        animationDuration: const Duration(milliseconds: 280),
+        child: tile,
+      );
+    }
+    return tile;
   }
 }
 

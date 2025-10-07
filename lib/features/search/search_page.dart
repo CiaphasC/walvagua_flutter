@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/category.dart';
@@ -38,6 +39,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final searchState = ref.watch(searchProvider);
     final history = ref.watch(searchHistoryProvider);
     final favorites = ref.watch(favoritesProvider);
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final iconColor = theme.iconTheme.color ?? theme.colorScheme.onSurface;
+    final glowColor = primary.withValues(alpha: 0.3);
 
     return Scaffold(
       appBar: AppBar(
@@ -53,11 +58,21 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search_rounded),
+            icon: GlowIcon(
+              Icons.search_rounded,
+              color: iconColor,
+              glowColor: glowColor,
+              blurRadius: 20,
+            ),
             onPressed: () => _onSearch(_controller.text, history),
           ),
           IconButton(
-            icon: const Icon(Icons.close_rounded),
+            icon: GlowIcon(
+              Icons.close_rounded,
+              color: iconColor,
+              glowColor: glowColor,
+              blurRadius: 16,
+            ),
             onPressed: () {
               _controller.clear();
               ref.read(searchProvider.notifier).clear();
@@ -70,11 +85,57 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SegmentedButton<SearchSegment>(
-              segments: const [
-                ButtonSegment(value: SearchSegment.wallpapers, label: Text('Wallpapers'), icon: Icon(Icons.photo_library_rounded)),
-                ButtonSegment(value: SearchSegment.categories, label: Text('Categorías'), icon: Icon(Icons.category_rounded)),
+              segments: [
+                ButtonSegment(
+                  value: SearchSegment.wallpapers,
+                  label: GlowText(
+                    'Wallpapers',
+                    style: theme.textTheme.titleSmall,
+                    glowColor: glowColor,
+                    blurRadius: 14,
+                  ),
+                  icon: GlowIcon(
+                    Icons.photo_library_rounded,
+                    color: iconColor,
+                    glowColor: glowColor,
+                    blurRadius: 18,
+                  ),
+                ),
+                ButtonSegment(
+                  value: SearchSegment.categories,
+                  label: GlowText(
+                    'Categor�as',
+                    style: theme.textTheme.titleSmall,
+                    glowColor: glowColor,
+                    blurRadius: 14,
+                  ),
+                  icon: GlowIcon(
+                    Icons.category_rounded,
+                    color: iconColor,
+                    glowColor: glowColor,
+                    blurRadius: 18,
+                  ),
+                ),
               ],
               selected: {searchState.segment},
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
+                      : theme.colorScheme.surface,
+                ),
+                overlayColor: WidgetStateProperty.all(primary.withValues(alpha: 0.08)),
+                side: WidgetStateProperty.resolveWith(
+                  (states) => BorderSide(
+                    color: states.contains(WidgetState.selected)
+                        ? primary.withValues(alpha: 0.6)
+                        : theme.dividerColor.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
               onSelectionChanged: (value) {
                 if (value.isNotEmpty) {
                   ref.read(searchProvider.notifier).setSegment(value.first);
@@ -141,10 +202,23 @@ class _HistorySection extends StatelessWidget {
       itemCount: history.length,
       itemBuilder: (context, index) {
         final item = history[index];
-        return ListTile(
-          leading: const Icon(Icons.history_rounded),
-          title: Text(item),
-          onTap: () => onSelect(item),
+        final theme = Theme.of(context);
+        return GlowContainer(
+          color: theme.cardColor.withValues(alpha: 0.92),
+          glowColor: theme.colorScheme.primary.withValues(alpha: 0.18),
+          blurRadius: 16,
+          spreadRadius: 0.6,
+          borderRadius: BorderRadius.circular(12),
+          child: ListTile(
+            leading: GlowIcon(
+              Icons.history_rounded,
+              color: theme.iconTheme.color,
+              glowColor: theme.colorScheme.primary.withValues(alpha: 0.18),
+              blurRadius: 14,
+            ),
+            title: Text(item),
+            onTap: () => onSelect(item),
+          ),
         );
       },
       separatorBuilder: (context, index) => const Divider(height: 1),
@@ -213,18 +287,42 @@ class _CategoryResults extends StatelessWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        return ListTile(
-          leading: const Icon(Icons.category_rounded),
-          title: Text(category.name),
-          subtitle: Text('${category.totalWallpapers} wallpapers'),
-          trailing: const Icon(Icons.chevron_right_rounded),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => CategoryWallpaperPage(category: category),
-              ),
-            );
-          },
+        final theme = Theme.of(context);
+        final glowColor = theme.colorScheme.primary.withValues(alpha: 0.2);
+        return GlowContainer(
+          color: theme.cardColor.withValues(alpha: 0.93),
+          glowColor: glowColor,
+          blurRadius: 20,
+          spreadRadius: 0.7,
+          borderRadius: BorderRadius.circular(14),
+          child: ListTile(
+            leading: GlowIcon(
+              Icons.category_rounded,
+              color: theme.iconTheme.color,
+              glowColor: glowColor,
+              blurRadius: 16,
+            ),
+            title: GlowText(
+              category.name,
+              style: theme.textTheme.titleMedium,
+              glowColor: glowColor,
+              blurRadius: 18,
+            ),
+            subtitle: Text('${category.totalWallpapers} wallpapers'),
+            trailing: GlowIcon(
+              Icons.chevron_right_rounded,
+              color: theme.iconTheme.color,
+              glowColor: glowColor,
+              blurRadius: 14,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => CategoryWallpaperPage(category: category),
+                ),
+              );
+            },
+          ),
         );
       },
       separatorBuilder: (context, index) => const Divider(height: 1),

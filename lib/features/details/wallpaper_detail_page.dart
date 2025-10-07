@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
@@ -86,13 +87,24 @@ class _WallpaperDetailPageState extends ConsumerState<WallpaperDetailPage> {
                   children: [
                     AspectRatio(
                       aspectRatio: wallpaper.type.toLowerCase() == 'square' ? 1 : 2 / 3,
-                      child: CachedNetworkImage(
-                        imageUrl: wallpaper.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      child: GlowContainer(
+                        color: Colors.transparent,
+                        glowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.28),
+                        blurRadius: 32,
+                        spreadRadius: 1.4,
+                        borderRadius: BorderRadius.circular(24),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: CachedNetworkImage(
+                            imageUrl: wallpaper.imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.broken_image_outlined, size: 72),
+                          ),
                         ),
-                        errorWidget: (context, url, error) => const Icon(Icons.broken_image_outlined, size: 72),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -113,7 +125,17 @@ class _WallpaperDetailPageState extends ConsumerState<WallpaperDetailPage> {
                               IconButton.filledTonal(
                                 tooltip: isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos',
                                 onPressed: () => ref.read(favoritesProvider.notifier).toggle(wallpaper),
-                                icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                              icon: GlowIcon(
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).iconTheme.color,
+                                glowColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: isFavorite ? 0.4 : 0.2),
+                                blurRadius: isFavorite ? 24 : 14,
+                              ),
                               ),
                             ],
                           ),
