@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,13 @@ import '../../providers/layout_provider.dart';
 import '../../providers/wallpaper_feed_provider.dart';
 import '../details/wallpaper_detail_page.dart';
 import '../../widgets/wallpaper_tile.dart';
+
+const double _kGridSpacing = 8.0;
+const EdgeInsets _kGridPadding = EdgeInsets.all(_kGridSpacing);
+const double _kMaxTileWidth = 360.0;
+const double _kMediumTileWidth = 300.0;
+const double _kSmallTileWidth = 240.0;
+const int _kMaxDynamicColumns = 12;
 
 class WallpaperTab extends ConsumerStatefulWidget {
   const WallpaperTab({super.key, required this.title, required this.request});
@@ -45,14 +54,50 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
     }
   }
 
+  _GridConfig _resolveGridConfig(BuildContext context, LayoutState layout) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final availableWidth = math.max(0.0, screenWidth - _kGridPadding.horizontal);
+
+    if (availableWidth <= 0) {
+      return const _GridConfig(columns: 1, aspectRatio: 0.68);
+    }
+
+    final int minColumns = math.max(1, layout.wallpaperColumns);
+    final int maxColumns = math.max(minColumns, _kMaxDynamicColumns);
+    int columns = minColumns;
+    double tileWidth;
+
+    while (true) {
+      tileWidth = (availableWidth - _kGridSpacing * (columns - 1)) / columns;
+      if (tileWidth <= _kMaxTileWidth || columns >= maxColumns) {
+        break;
+      }
+      columns++;
+    }
+
+    tileWidth = (availableWidth - _kGridSpacing * (columns - 1)) / columns;
+
+    double aspectRatio;
+    if (tileWidth >= _kMediumTileWidth) {
+      aspectRatio = 0.68;
+    } else if (tileWidth >= _kSmallTileWidth) {
+      aspectRatio = 0.7;
+    } else {
+      aspectRatio = 0.75;
+    }
+
+    return _GridConfig(columns: columns, aspectRatio: aspectRatio);
+  }
+
   @override
   Widget build(BuildContext context) {
     final feedState = ref.watch(wallpaperFeedProvider(widget.request));
     final layout = ref.watch(layoutProvider);
     final favorites = ref.watch(favoritesProvider);
+    final gridConfig = _resolveGridConfig(context, layout);
 
     if (feedState.isLoading && feedState.items.isEmpty) {
-      return const _LoadingGrid();
+      return _LoadingGrid(config: gridConfig);
     }
 
     if (feedState.error != null && feedState.items.isEmpty) {
@@ -79,13 +124,13 @@ class _WallpaperTabState extends ConsumerState<WallpaperTab> {
         controller: _scrollController,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(8),
+            padding: _kGridPadding,
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: layout.wallpaperColumns,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: layout.wallpaperColumns == 2 ? 0.68 : 0.7,
+                crossAxisCount: gridConfig.columns,
+                crossAxisSpacing: _kGridSpacing,
+                mainAxisSpacing: _kGridSpacing,
+                childAspectRatio: gridConfig.aspectRatio,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -138,18 +183,30 @@ class _WallpaperSummary {
   final bool isFavorite;
 }
 
+class _GridConfig {
+  const _GridConfig({
+    required this.columns,
+    required this.aspectRatio,
+  });
+
+  final int columns;
+  final double aspectRatio;
+}
+
 class _LoadingGrid extends StatelessWidget {
-  const _LoadingGrid();
+  const _LoadingGrid({required this.config});
+
+  final _GridConfig config;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.7,
+      padding: _kGridPadding,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: config.columns,
+        mainAxisSpacing: _kGridSpacing,
+        crossAxisSpacing: _kGridSpacing,
+        childAspectRatio: config.aspectRatio,
       ),
       itemBuilder: (context, index) {
         return DecoratedBox(
