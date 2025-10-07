@@ -318,7 +318,7 @@ class _WallpaperCarouselPageState
 
   Future<void> _handleApply(Wallpaper wallpaper) async {
     if (!Platform.isAndroid) {
-      _showSnackBar('Esta acción solo está disponible en Android.');
+      _showSnackBar('Esta acci³n solo est¡ disponible en Android.');
       return;
     }
     final target = await showModalBottomSheet<_ApplyTarget>(
@@ -582,25 +582,29 @@ class _CarouselItem extends StatelessWidget {
         final slotWidth = constraints.maxWidth;
         final slotHeight = constraints.maxHeight;
         final isUltraTall = slotHeight > slotWidth * 1.3;
-        final edgePadding = isUltraTall ? 12.0 : 24.0;
+        final edgePadding = isUltraTall ? 8.0 : 16.0;
 
-        double targetHeight = slotHeight * (isUltraTall ? 1.7 : 1.28);
-        double targetWidth = targetHeight * aspectRatio;
+        double targetWidth = slotWidth * (isUltraTall ? 0.82 : 0.78);
+        double targetHeight = targetWidth / aspectRatio;
 
-        final maxWidth = slotWidth * (isUltraTall ? 1.45 : 1.25);
-        final minWidth = slotWidth * 0.78;
-        if (targetWidth > maxWidth) {
-          targetWidth = maxWidth;
-          targetHeight = targetWidth / aspectRatio;
-        } else if (targetWidth < minWidth) {
-          targetWidth = minWidth;
-          targetHeight = targetWidth / aspectRatio;
-        }
-
-        final minHeight = slotHeight * (isUltraTall ? 1.25 : 1.05);
+        final minHeight = slotHeight * (isUltraTall ? 1.08 : 0.95);
+        final maxHeight = slotHeight * (isUltraTall ? 1.4 : 1.15);
         if (targetHeight < minHeight) {
           targetHeight = minHeight;
           targetWidth = targetHeight * aspectRatio;
+        } else if (targetHeight > maxHeight) {
+          targetHeight = maxHeight;
+          targetWidth = targetHeight * aspectRatio;
+        }
+
+        final minWidth = slotWidth * 0.72;
+        final maxWidth = slotWidth * (isUltraTall ? 0.85 : 0.82);
+        if (targetWidth < minWidth) {
+          targetWidth = minWidth;
+          targetHeight = targetWidth / aspectRatio;
+        } else if (targetWidth > maxWidth) {
+          targetWidth = maxWidth;
+          targetHeight = targetWidth / aspectRatio;
         }
 
         final verticalOffset = (slotHeight - targetHeight) / 2;
