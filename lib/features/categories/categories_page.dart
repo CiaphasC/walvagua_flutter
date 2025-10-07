@@ -33,7 +33,7 @@ class CategoriesPage extends ConsumerWidget {
                   final category = categories[index];
                   return _CategoryListTile(category: category);
                 },
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (context, index) => const SizedBox(height: 12),
                 itemCount: categories.length,
               )
             : GridView.builder(
@@ -77,13 +77,13 @@ class _CategoryListTile extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: category.image,
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(
+            placeholder: (context, url) => Container(
               color: Theme.of(context)
                   .colorScheme
                   .surfaceContainerHighest
                   .withValues(alpha: 0.2),
             ),
-            errorWidget: (_, __, ___) => const Icon(Icons.category_rounded),
+            errorWidget: (context, url, error) => const Icon(Icons.category_rounded),
           ),
         ),
       ),
@@ -120,13 +120,13 @@ class _CategoryGridTile extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: category.image,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
+                  placeholder: (context, url) => Container(
                     color: Theme.of(context)
                         .colorScheme
                         .surfaceContainerHighest
                         .withValues(alpha: 0.2),
                   ),
-                  errorWidget: (_, __, ___) => const Icon(Icons.category_rounded, size: 48),
+                  errorWidget: (context, url, error) => const Icon(Icons.category_rounded, size: 48),
                 ),
               ),
             ),

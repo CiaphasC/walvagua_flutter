@@ -7,9 +7,9 @@ import '../core/constants.dart';
 import '../data/models/wallpaper.dart';
 import 'app_config_provider.dart';
 
-final favoritesProvider = StateNotifierProvider<FavoritesController, FavoritesState>((ref) {
-  return FavoritesController(ref.watch(sharedPrefsProvider));
-});
+final favoritesProvider = NotifierProvider<FavoritesController, FavoritesState>(
+  FavoritesController.new,
+);
 
 class FavoritesState {
   const FavoritesState({this.items = const <Wallpaper>[]});
@@ -19,24 +19,23 @@ class FavoritesState {
   bool contains(String id) => items.any((element) => element.imageId == id);
 }
 
-class FavoritesController extends StateNotifier<FavoritesState> {
-  FavoritesController(this._preferences) : super(const FavoritesState()) {
-    _loadFavorites();
-  }
+class FavoritesController extends Notifier<FavoritesState> {
+  FavoritesController();
 
-  final SharedPreferences _preferences;
+  late final SharedPreferences _preferences;
 
-  Future<void> _loadFavorites() async {
+  @override
+  FavoritesState build() {
+    _preferences = ref.watch(sharedPrefsProvider);
     final raw = _preferences.getString(AppConstants.sharedPrefsFavoritesKey);
     if (raw == null || raw.isEmpty) {
-      state = const FavoritesState(items: <Wallpaper>[]);
-      return;
+      return const FavoritesState(items: <Wallpaper>[]);
     }
     final List<dynamic> jsonList = jsonDecode(raw) as List<dynamic>;
     final favorites = jsonList
         .map((item) => Wallpaper.fromJson((item as Map<dynamic, dynamic>).map((key, value) => MapEntry(key.toString(), value))))
         .toList();
-    state = FavoritesState(items: favorites);
+    return FavoritesState(items: favorites);
   }
 
   void toggle(Wallpaper wallpaper) {

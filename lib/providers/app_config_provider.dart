@@ -19,12 +19,9 @@ final appRepositoryProvider = Provider<AppRepository>((ref) {
   return AppRepository(ref.watch(sharedPrefsProvider));
 });
 
-final appConfigProvider = StateNotifierProvider<AppConfigController, AppConfigState>((ref) {
-  return AppConfigController(
-    ref.watch(appRepositoryProvider),
-    ref.watch(sharedPrefsProvider),
-  );
-});
+final appConfigProvider = NotifierProvider<AppConfigController, AppConfigState>(
+  AppConfigController.new,
+);
 
 final apiServiceProvider = Provider<ApiService>((ref) {
   final state = ref.watch(appConfigProvider);
@@ -84,11 +81,18 @@ class AppConfigState {
   }
 }
 
-class AppConfigController extends StateNotifier<AppConfigState> {
-  AppConfigController(this._repository, this._preferences) : super(const AppConfigState());
+class AppConfigController extends Notifier<AppConfigState> {
+  AppConfigController();
 
-  final AppRepository _repository;
-  final SharedPreferences _preferences;
+  late final AppRepository _repository;
+  late final SharedPreferences _preferences;
+
+  @override
+  AppConfigState build() {
+    _repository = ref.watch(appRepositoryProvider);
+    _preferences = ref.watch(sharedPrefsProvider);
+    return const AppConfigState();
+  }
 
   Future<void> initialize() async {
     if (state.isLoading || state.isReady) {

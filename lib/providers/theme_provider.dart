@@ -5,19 +5,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 import 'app_config_provider.dart';
 
-final themeProvider = StateNotifierProvider<ThemeController, ThemeMode>((ref) {
-  return ThemeController(ref.watch(sharedPrefsProvider));
-});
+final themeProvider = NotifierProvider<ThemeController, ThemeMode>(
+  ThemeController.new,
+);
 
-class ThemeController extends StateNotifier<ThemeMode> {
-  ThemeController(this._preferences)
-      : super(
-          (_preferences.getBool(AppConstants.sharedPrefsThemeKey) ?? false)
-              ? ThemeMode.dark
-              : ThemeMode.light,
-        );
+class ThemeController extends Notifier<ThemeMode> {
+  ThemeController();
 
-  final SharedPreferences _preferences;
+  late final SharedPreferences _preferences;
+
+  @override
+  ThemeMode build() {
+    _preferences = ref.watch(sharedPrefsProvider);
+    final isDark = _preferences.getBool(AppConstants.sharedPrefsThemeKey) ?? false;
+    return isDark ? ThemeMode.dark : ThemeMode.light;
+  }
 
   void toggleTheme() {
     final next = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;

@@ -147,7 +147,7 @@ class _HistorySection extends StatelessWidget {
           onTap: () => onSelect(item),
         );
       },
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (context, index) => const Divider(height: 1),
     );
   }
 }
@@ -227,7 +227,7 @@ class _CategoryResults extends StatelessWidget {
           },
         );
       },
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (context, index) => const Divider(height: 1),
     );
   }
 }

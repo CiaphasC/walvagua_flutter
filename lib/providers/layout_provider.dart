@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 import 'app_config_provider.dart';
 
-final layoutProvider = StateNotifierProvider<LayoutController, LayoutState>((ref) {
-  return LayoutController(ref.watch(sharedPrefsProvider));
-});
+final layoutProvider = NotifierProvider<LayoutController, LayoutState>(
+  LayoutController.new,
+);
 
 class LayoutState {
   const LayoutState({
@@ -25,18 +25,21 @@ class LayoutState {
   }
 }
 
-class LayoutController extends StateNotifier<LayoutState> {
-  LayoutController(this._preferences)
-      : super(
-          LayoutState(
-            wallpaperColumns: _preferences.getInt(AppConstants.sharedPrefsWallpaperColumnsKey) ??
-                AppConstants.defaultWallpaperColumns,
-            categoryLayout: _preferences.getString(AppConstants.sharedPrefsCategoryLayoutKey) ??
-                AppConstants.defaultCategoryLayout,
-          ),
-        );
+class LayoutController extends Notifier<LayoutState> {
+  LayoutController();
 
-  final SharedPreferences _preferences;
+  late final SharedPreferences _preferences;
+
+  @override
+  LayoutState build() {
+    _preferences = ref.watch(sharedPrefsProvider);
+    return LayoutState(
+      wallpaperColumns:
+          _preferences.getInt(AppConstants.sharedPrefsWallpaperColumnsKey) ?? AppConstants.defaultWallpaperColumns,
+      categoryLayout:
+          _preferences.getString(AppConstants.sharedPrefsCategoryLayoutKey) ?? AppConstants.defaultCategoryLayout,
+    );
+  }
 
   void setWallpaperColumns(int columns) {
     state = state.copyWith(wallpaperColumns: columns);

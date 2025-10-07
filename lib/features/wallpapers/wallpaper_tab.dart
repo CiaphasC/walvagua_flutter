@@ -142,7 +142,7 @@ class _LoadingGrid extends StatelessWidget {
         crossAxisSpacing: 12,
         childAspectRatio: 0.7,
       ),
-      itemBuilder: (_, __) {
+      itemBuilder: (context, index) {
         return DecoratedBox(
           decoration: BoxDecoration(
             color: Theme.of(context)

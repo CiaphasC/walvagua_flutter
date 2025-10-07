@@ -212,8 +212,8 @@ class WallpaperImage extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: fit,
-      placeholder: (_, __) => Container(color: placeholderColor),
-      errorWidget: (_, __, ___) => Container(
+      placeholder: (context, url) => Container(color: placeholderColor),
+      errorWidget: (context, url, error) => Container(
         color: placeholderColor,
         alignment: Alignment.center,
         child: const Icon(Icons.broken_image_outlined),

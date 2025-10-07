@@ -7,11 +7,10 @@ import '../data/repositories/wallpaper_repository.dart';
 import 'app_config_provider.dart';
 import 'layout_provider.dart';
 
-final wallpaperFeedProvider = StateNotifierProvider.family<WallpaperFeedController, WallpaperFeedState, WallpaperFeedRequest>((ref, request) {
-  final repository = ref.watch(wallpaperRepositoryProvider);
-  final columns = ref.watch(layoutProvider).wallpaperColumns;
-  return WallpaperFeedController(repository, request, columns);
-});
+final wallpaperFeedProvider =
+    NotifierProvider.family<WallpaperFeedController, WallpaperFeedState, WallpaperFeedRequest>(
+  WallpaperFeedController.new,
+);
 
 class WallpaperFeedRequest {
   const WallpaperFeedRequest({
@@ -23,6 +22,22 @@ class WallpaperFeedRequest {
   final String order;
   final String filter;
   final String category;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is WallpaperFeedRequest &&
+        other.order == order &&
+        other.filter == filter &&
+        other.category == category;
+  }
+
+  @override
+  int get hashCode => Object.hash(order, filter, category);
+
+  @override
+  String toString() => 'WallpaperFeedRequest(order: $order, filter: $filter, category: $category)';
 }
 
 class WallpaperFeedState {
@@ -64,17 +79,35 @@ class WallpaperFeedState {
   }
 }
 
-class WallpaperFeedController extends StateNotifier<WallpaperFeedState> {
-  WallpaperFeedController(this._repository, this._request, int columns)
-      : _pageSize = columns == 3 ? AppConstants.defaultPageSize3Columns : AppConstants.defaultPageSize2Columns,
-        super(const WallpaperFeedState());
+class WallpaperFeedController extends Notifier<WallpaperFeedState> {
+  WallpaperFeedController(this._request);
 
-  final WallpaperRepository _repository;
   final WallpaperFeedRequest _request;
-  final int _pageSize;
+  late final WallpaperRepository _repository;
+  late int _pageSize;
+  int? _lastColumns;
 
   bool _hasInitialised = false;
   bool _isLoadingMore = false;
+  WallpaperFeedState _cachedState = const WallpaperFeedState();
+
+  @override
+  WallpaperFeedState build() {
+    _repository = ref.watch(wallpaperRepositoryProvider);
+    final columns = ref.watch(layoutProvider.select((value) => value.wallpaperColumns));
+    _pageSize = columns == 3 ? AppConstants.defaultPageSize3Columns : AppConstants.defaultPageSize2Columns;
+    if (_lastColumns != null && _lastColumns != columns && _hasInitialised) {
+      Future.microtask(refresh);
+    }
+    _lastColumns = columns;
+    return _cachedState;
+  }
+
+  @override
+  set state(WallpaperFeedState value) {
+    _cachedState = value;
+    super.state = value;
+  }
 
   Future<void> loadInitial({bool force = false}) async {
     if (_hasInitialised && !force) {

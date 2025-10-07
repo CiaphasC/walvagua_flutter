@@ -6,25 +6,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants.dart';
 import 'app_config_provider.dart';
 
-final searchHistoryProvider = StateNotifierProvider<SearchHistoryController, List<String>>((ref) {
-  return SearchHistoryController(ref.watch(sharedPrefsProvider));
-});
+final searchHistoryProvider = NotifierProvider<SearchHistoryController, List<String>>(
+  SearchHistoryController.new,
+);
 
-class SearchHistoryController extends StateNotifier<List<String>> {
-  SearchHistoryController(this._preferences) : super(const <String>[]) {
-    _load();
-  }
+class SearchHistoryController extends Notifier<List<String>> {
+  SearchHistoryController();
 
-  final SharedPreferences _preferences;
+  late final SharedPreferences _preferences;
 
-  void _load() {
+  @override
+  List<String> build() {
+    _preferences = ref.watch(sharedPrefsProvider);
     final raw = _preferences.getString(AppConstants.searchHistoryKey);
     if (raw == null || raw.isEmpty) {
-      state = const <String>[];
-      return;
+      return const <String>[];
     }
     final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
-    state = decoded.map((e) => e.toString()).toList();
+    return decoded.map((e) => e.toString()).toList();
   }
 
   void add(String term) {

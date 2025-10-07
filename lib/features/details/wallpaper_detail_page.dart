@@ -89,10 +89,10 @@ class _WallpaperDetailPageState extends ConsumerState<WallpaperDetailPage> {
                       child: CachedNetworkImage(
                         imageUrl: wallpaper.imageUrl,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
+                        placeholder: (context, url) => Container(
                           color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         ),
-                        errorWidget: (_, __, ___) => const Icon(Icons.broken_image_outlined, size: 72),
+                        errorWidget: (context, url, error) => const Icon(Icons.broken_image_outlined, size: 72),
                       ),
                     ),
                     const SizedBox(height: 16),

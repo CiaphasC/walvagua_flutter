@@ -6,9 +6,9 @@ import '../data/models/wallpaper.dart';
 import '../data/repositories/wallpaper_repository.dart';
 import 'app_config_provider.dart';
 
-final searchProvider = StateNotifierProvider<SearchController, SearchState>((ref) {
-  return SearchController(ref.watch(wallpaperRepositoryProvider));
-});
+final searchProvider = NotifierProvider<SearchController, SearchState>(
+  SearchController.new,
+);
 
 enum SearchSegment { wallpapers, categories }
 
@@ -49,10 +49,16 @@ class SearchState {
   }
 }
 
-class SearchController extends StateNotifier<SearchState> {
-  SearchController(this._repository) : super(const SearchState());
+class SearchController extends Notifier<SearchState> {
+  SearchController();
 
-  final WallpaperRepository _repository;
+  late final WallpaperRepository _repository;
+
+  @override
+  SearchState build() {
+    _repository = ref.watch(wallpaperRepositoryProvider);
+    return const SearchState();
+  }
 
   Future<void> search(String term) async {
     if (term.trim().isEmpty) {
