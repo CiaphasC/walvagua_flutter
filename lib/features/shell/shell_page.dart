@@ -37,22 +37,46 @@ class _ShellPageState extends ConsumerState<ShellPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: GlowText(
-          _titleForIndex(_currentIndex),
-          style: theme.textTheme.titleLarge,
-          glowColor: glowColor,
-          blurRadius: 22,
-        ),
-        actions: [
-          if (_currentIndex != 3) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: GlowContainer(
-                color: Colors.transparent,
-                glowColor: glowColor,
-                blurRadius: 18,
-                spreadRadius: 0.8,
-                borderRadius: BorderRadius.circular(22),
+        toolbarHeight: 72,
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: 52,
+          decoration: BoxDecoration(
+            color: theme.inputDecorationTheme.fillColor,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4)),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            children: [
+              IconButton(
+                tooltip: 'Buscar',
+                icon: Icon(
+                  Icons.search_rounded,
+                  color: theme.colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SearchPage()),
+                  );
+                },
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    _titleForIndex(_currentIndex),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Material(
                   color: Colors.transparent,
                   shape: const CircleBorder(),
@@ -66,96 +90,70 @@ class _ShellPageState extends ConsumerState<ShellPage> {
                     },
                     child: Ink.image(
                       image: const AssetImage('assets/images/app_icon_circle.webp'),
-                      width: 36,
-                      height: 36,
+                      width: 40,
+                      height: 40,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
-            ),
-            IconButton(
-              tooltip: 'Buscar',
-              icon: GlowIcon(
-                Icons.search_rounded,
-                color: iconColor,
-                glowColor: glowColor,
-                blurRadius: 20,
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SearchPage()),
-                );
-              },
-            ),
-          ],
-          IconButton(
-            tooltip: 'Cambiar tema',
-            icon: GlowIcon(
-              theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode,
-              color: iconColor,
-              glowColor: glowColor,
-              blurRadius: 22,
-            ),
-            onPressed: themeController.toggleTheme,
+            ],
           ),
-        ],
+        ),
       ),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: primary,
-        unselectedItemColor: iconColor.withValues(alpha: 0.7),
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.photo_library_rounded),
-            activeIcon: GlowIcon(
-              Icons.photo_library_rounded,
-              color: primary,
-              glowColor: glowColor,
-              blurRadius: 22,
-            ),
-            label: 'Wallpapers',
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 14, offset: const Offset(0, 4)),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.category_rounded),
-            activeIcon: GlowIcon(
-              Icons.category_rounded,
-              color: primary,
-              glowColor: glowColor,
-              blurRadius: 22,
-            ),
-            label: 'Categorías',
+          child: NavigationBar(
+            height: 64,
+            backgroundColor: Colors.transparent,
+            indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.14),
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) {
+              if (index == 3) {
+                themeController.toggleTheme();
+                return;
+              }
+              setState(() => _currentIndex = index);
+            },
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.photo_library_outlined),
+                selectedIcon: Icon(Icons.photo_library_rounded, color: primary),
+                label: 'Wallpapers',
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.category_outlined),
+                selectedIcon: Icon(Icons.category_rounded, color: primary),
+                label: 'Categorías',
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.favorite_border_rounded),
+                selectedIcon: Icon(Icons.favorite_rounded, color: primary),
+                label: 'Favoritos',
+              ),
+              NavigationDestination(
+                icon: Icon(theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode),
+                selectedIcon: Icon(
+                  theme.brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode,
+                  color: primary,
+                ),
+                label: 'Tema',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.favorite_rounded),
-            activeIcon: GlowIcon(
-              Icons.favorite_rounded,
-              color: primary,
-              glowColor: glowColor,
-              blurRadius: 22,
-            ),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.settings_rounded),
-            activeIcon: GlowIcon(
-              Icons.settings_rounded,
-              color: primary,
-              glowColor: glowColor,
-              blurRadius: 22,
-            ),
-            label: 'Ajustes',
-          ),
-        ],
+        ),
       ),
     );
   }

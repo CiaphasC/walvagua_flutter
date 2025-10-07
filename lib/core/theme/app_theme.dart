@@ -82,6 +82,21 @@ class AppTheme {
         showUnselectedLabels: true,
         elevation: 0,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: Colors.transparent,
+        indicatorColor: AppColors.lightPrimary.withAlpha((0.14 * 255).round()),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(color: selected ? AppColors.lightPrimary : AppColors.lightTextDefault.withAlpha((0.7 * 255).round()));
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            color: selected ? AppColors.lightPrimary : AppColors.lightTextDefault.withAlpha((0.7 * 255).round()),
+            fontWeight: FontWeight.w600,
+          );
+        }),
+      ),
       tabBarTheme: const TabBarThemeData(
         indicatorColor: AppColors.lightPrimary,
         labelColor: AppColors.lightPrimary,
@@ -162,6 +177,21 @@ class AppTheme {
         unselectedItemColor: Colors.white70,
         showUnselectedLabels: true,
         elevation: 0,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: Colors.transparent,
+        indicatorColor: AppColors.darkPrimary.withAlpha((0.18 * 255).round()),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(color: selected ? Colors.white : Colors.white70);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            color: selected ? Colors.white : Colors.white70,
+            fontWeight: FontWeight.w600,
+          );
+        }),
       ),
       tabBarTheme: const TabBarThemeData(
         indicatorColor: AppColors.darkPrimary,

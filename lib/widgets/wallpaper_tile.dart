@@ -31,7 +31,7 @@ class WallpaperTile extends StatelessWidget {
     this.onTap,
     this.onFavorite,
     this.footerBuilder,
-    this.borderRadius = const BorderRadius.all(Radius.circular(16)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(24)),
   });
 
   final Wallpaper wallpaper;
@@ -51,7 +51,7 @@ class WallpaperTile extends StatelessWidget {
             onFavorite: onFavorite,
           ),
         ) ??
-        WallpaperTileMetadataFooter(
+        _OverlayFooter(
           wallpaper: wallpaper,
           isFavorite: isFavorite,
           onFavorite: onFavorite,
@@ -65,22 +65,15 @@ class WallpaperTile extends StatelessWidget {
           color: Theme.of(context).cardColor,
           borderRadius: borderRadius,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: borderRadius.topLeft,
-                  topRight: borderRadius.topRight,
-                ),
-                child: WallpaperImage(
-                  wallpaper: wallpaper,
-                ),
-              ),
-            ),
-            footer,
-          ],
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              WallpaperImage(wallpaper: wallpaper),
+              footer,
+            ],
+          ),
         ),
       ),
     );
@@ -152,6 +145,100 @@ class WallpaperTileMetadataFooter extends StatelessWidget {
     );
   }
 }
+
+class _OverlayFooter extends StatelessWidget {
+  const _OverlayFooter({
+    required this.wallpaper,
+    required this.isFavorite,
+    this.onFavorite,
+  });
+
+  final Wallpaper wallpaper;
+  final bool isFavorite;
+  final VoidCallback? onFavorite;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final titleSize = width * 0.095; // proporcional al ancho
+        final subtitleSize = width * 0.045;
+
+        final titleStyle = Theme.of(context)
+            .textTheme
+            .titleLarge
+            ?.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: titleSize.clamp(14, 28));
+
+        final subtitleStyle = Theme.of(context)
+            .textTheme
+            .labelLarge
+            ?.copyWith(color: const Color(0xFFFFC107), letterSpacing: 0.5, fontSize: subtitleSize.clamp(10, 16));
+
+        return Stack(
+          children: [
+            // Degradado suave para legibilidad en toda la tarjeta
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black45],
+                  ),
+                ),
+              ),
+            ),
+            // Contenido centrado
+            Positioned.fill(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        wallpaper.imageName.isEmpty ? 'Sin nombre' : wallpaper.imageName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: titleStyle,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'STREAK COLLECTION',
+                        textAlign: TextAlign.center,
+                        style: subtitleStyle,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Botón de favorito flotante
+            if (onFavorite != null)
+              Positioned(
+                right: 8,
+                bottom: 8,
+                child: Material(
+                  color: Colors.black45,
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: IconButton(
+                    onPressed: onFavorite,
+                    icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                    color: isFavorite ? Theme.of(context).colorScheme.primary : Colors.white,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// Badge hexagonal eliminado según requerimiento
 
 class WallpaperTileFavoriteFooter extends StatelessWidget {
   const WallpaperTileFavoriteFooter({
