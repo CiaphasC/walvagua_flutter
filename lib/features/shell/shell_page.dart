@@ -38,23 +38,6 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     final isCompact = width < 600;
     final isDark = theme.brightness == Brightness.dark;
 
-    final navGlassColor = theme.colorScheme.surface.withValues(
-      alpha: isDark
-          ? (isCompact ? 0.36 : 0.4)
-          : (isCompact ? 0.58 : 0.54),
-    );
-    final navHighlight = Colors.white.withValues(
-      alpha: isDark ? (isCompact ? 0.02 : 0.04) : (isCompact ? 0.08 : 0.1),
-    );
-    final navBorderColor = theme.colorScheme.onSurface.withValues(
-      alpha: isDark ? (isCompact ? 0.08 : 0.1) : (isCompact ? 0.05 : 0.07),
-    );
-    final navShadowColor = Colors.black.withValues(alpha: isDark ? 0.16 : 0.1);
-    final navBlur = isCompact ? 8.0 : 12.0;
-    final navHeight = isCompact ? 64.0 : 72.0;
-    final navHorizontalPadding = isCompact ? 0.0 : 24.0;
-    final navBottomPadding = mediaQuery.padding.bottom + (isCompact ? 8.0 : 16.0);
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -193,10 +176,10 @@ class _ShellPageState extends ConsumerState<ShellPage> {
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.fromLTRB(
-          navHorizontalPadding + 16,
+          16,
           0,
-          navHorizontalPadding + 16,
-          navBottomPadding + 16,
+          16,
+          mediaQuery.padding.bottom + 16,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
@@ -226,148 +209,146 @@ class _ShellPageState extends ConsumerState<ShellPage> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: NavigationBar(
-                  height: navHeight,
-                  backgroundColor: Colors.transparent,
-                  surfaceTintColor: Colors.transparent,
-                  indicatorColor: primary.withValues(alpha: isCompact ? 0.14 : 0.17),
-                  selectedIndex: _currentIndex,
-                  labelBehavior: isCompact
-                      ? NavigationDestinationLabelBehavior.alwaysShow
-                      : NavigationDestinationLabelBehavior.alwaysShow,
-                  onDestinationSelected: (index) {
-                    if (index == 3) {
-                      themeController.toggleTheme();
-                      return;
-                    }
-                    setState(() => _currentIndex = index);
-                  },
-                  destinations: [
-                    NavigationDestination(
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _currentIndex == 0 ? primary.withOpacity(0.1) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.photo_library_outlined,
-                          color: _currentIndex == 0 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                      selectedIcon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.photo_library_rounded, color: Colors.white),
-                      ),
-                      label: 'Wallpapers',
+              height: 72,
+              backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              indicatorColor: primary.withValues(alpha: isCompact ? 0.14 : 0.17),
+              selectedIndex: _currentIndex,
+              labelBehavior: isCompact
+                  ? NavigationDestinationLabelBehavior.alwaysShow
+                  : NavigationDestinationLabelBehavior.alwaysShow,
+              onDestinationSelected: (index) {
+                if (index == 3) {
+                  themeController.toggleTheme();
+                  return;
+                }
+                setState(() => _currentIndex = index);
+              },
+              destinations: [
+                NavigationDestination(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _currentIndex == 0 ? primary.withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    NavigationDestination(
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _currentIndex == 1 ? primary.withOpacity(0.1) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.category_outlined,
-                          color: _currentIndex == 1 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                      selectedIcon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.category_rounded, color: Colors.white),
-                      ),
-                      label: 'Categorías',
+                    child: Icon(
+                      Icons.photo_library_outlined,
+                      color: _currentIndex == 0 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
-                    NavigationDestination(
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _currentIndex == 2 ? primary.withOpacity(0.1) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
+                  ),
+                  selectedIcon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
-                        child: Icon(
-                          Icons.favorite_border_rounded,
-                          color: _currentIndex == 2 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                      selectedIcon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.accentGradient,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.lightAccent.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.favorite_rounded, color: Colors.white),
-                      ),
-                      label: 'Favoritos',
+                      ],
                     ),
-                    NavigationDestination(
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _currentIndex == 3 ? primary.withOpacity(0.1) : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          isDark ? Icons.light_mode : Icons.dark_mode,
-                          color: _currentIndex == 3 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                      selectedIcon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.lightSecondary, AppColors.lightSecondary.withOpacity(0.8)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.lightSecondary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isDark ? Icons.light_mode : Icons.dark_mode,
-                          color: Colors.white,
-                        ),
-                      ),
-                      label: 'Tema',
-                    ),
-                  ],
+                    child: const Icon(Icons.photo_library_rounded, color: Colors.white),
+                  ),
+                  label: 'Wallpapers',
                 ),
-              ),
+                NavigationDestination(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _currentIndex == 1 ? primary.withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.category_outlined,
+                      color: _currentIndex == 1 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  selectedIcon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(Icons.category_rounded, color: Colors.white),
+                  ),
+                  label: 'Categorías',
+                ),
+                NavigationDestination(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _currentIndex == 2 ? primary.withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.favorite_border_rounded,
+                      color: _currentIndex == 2 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  selectedIcon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.accentGradient,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.lightAccent.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(Icons.favorite_rounded, color: Colors.white),
+                  ),
+                  label: 'Favoritos',
+                ),
+                NavigationDestination(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _currentIndex == 3 ? primary.withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      isDark ? Icons.light_mode : Icons.dark_mode,
+                      color: _currentIndex == 3 ? primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  selectedIcon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.lightSecondary, AppColors.lightSecondary.withOpacity(0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.lightSecondary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      isDark ? Icons.light_mode : Icons.dark_mode,
+                      color: Colors.white,
+                    ),
+                  ),
+                  label: 'Tema',
+                ),
+              ],
             ),
           ),
         ),
@@ -390,4 +371,3 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     }
   }
 }
-
