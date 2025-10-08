@@ -94,7 +94,7 @@ class AppTheme {
       onTertiaryContainer: Colors.white,
       error: AppColors.error,
       onError: Colors.white,
-      errorContainer: AppColors.error.withOpacity(0.1),
+      errorContainer: const Color(0x1AE17055), // AppColors.error.withOpacity(0.1)
       onErrorContainer: AppColors.error,
       surface: AppColors.lightSurface,
       onSurface: AppColors.lightTextDefault,
@@ -102,8 +102,8 @@ class AppTheme {
       onSurfaceVariant: AppColors.lightTextSecondary,
       outline: AppColors.greySoft,
       outlineVariant: AppColors.separator,
-      shadow: Colors.black.withOpacity(0.08),
-      scrim: Colors.black.withOpacity(0.4),
+      shadow: const Color(0x14000000), // Colors.black.withOpacity(0.08)
+      scrim: const Color(0x66000000), // Colors.black.withOpacity(0.4)
       inverseSurface: AppColors.darkSurface,
       onInverseSurface: Colors.white,
       inversePrimary: AppColors.lightPrimary,
@@ -189,16 +189,16 @@ class AppTheme {
       onTertiaryContainer: Colors.white,
       error: AppColors.error,
       onError: Colors.white,
-      errorContainer: AppColors.error.withOpacity(0.2),
+      errorContainer: const Color(0x33E17055), // AppColors.error.withOpacity(0.2)
       onErrorContainer: Colors.white,
       surface: AppColors.darkSurface,
       onSurface: Colors.white,
       surfaceVariant: AppColors.darkSurfaceVariant,
       onSurfaceVariant: AppColors.darkTextSecondary,
-      outline: AppColors.darkTextSecondary.withOpacity(0.3),
-      outlineVariant: AppColors.darkTextSecondary.withOpacity(0.1),
-      shadow: Colors.black.withOpacity(0.3),
-      scrim: Colors.black.withOpacity(0.6),
+      outline: const Color(0x4DB2BEC3), // AppColors.darkTextSecondary.withOpacity(0.3)
+      outlineVariant: const Color(0x1AB2BEC3), // AppColors.darkTextSecondary.withOpacity(0.1)
+      shadow: const Color(0x4D000000), // Colors.black.withOpacity(0.3)
+      scrim: const Color(0x99000000), // Colors.black.withOpacity(0.6)
       inverseSurface: AppColors.lightBackground,
       onInverseSurface: AppColors.lightTextDefault,
       inversePrimary: AppColors.darkPrimary,

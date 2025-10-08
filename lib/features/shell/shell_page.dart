@@ -151,18 +151,17 @@ class _ShellPageState extends ConsumerState<ShellPage> {
                           color: theme.colorScheme.secondary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(24),
                         ),
-                          child: IconButton(
-                            tooltip: 'Configuración',
-                            icon: Icon(
-                              Icons.settings_rounded,
-                              color: theme.colorScheme.secondary,
-                            ),
-                            onPressed: () {
-                              if (_currentIndex != 3) {
-                                setState(() => _currentIndex = 3);
-                              }
-                            },
+                        child: IconButton(
+                          tooltip: 'Configuración',
+                          icon: Icon(
+                            Icons.settings_rounded,
+                            color: theme.colorScheme.secondary,
                           ),
+                          onPressed: () {
+                            if (_currentIndex != 3) {
+                              setState(() => _currentIndex = 3);
+                            }
+                          },
                         ),
                       ),
                     ],
